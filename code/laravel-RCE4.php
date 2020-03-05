@@ -1,4 +1,9 @@
 <?php
+/*
+Author:monitor
+description:
+    laravel deserialization chain
+*/
 namespace Illuminate\Broadcasting
 {
     class PendingBroadcast{
