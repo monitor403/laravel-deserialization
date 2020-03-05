@@ -28,7 +28,6 @@ namespace Illuminate\Events
         }
     }
 }
-
 namespace
 {
     if($argc<4){
